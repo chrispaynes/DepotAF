@@ -5,10 +5,12 @@ services:
         build:
             context: .
             dockerfile: ./docker/airflow/Dockerfile
+        image: airflow_depot:latest
         restart: always
         ports:
-            - '8000:8000'
+            - '8080:8080'
         depends_on:
+            - airflowdb
             - postgres
         volumes:
             - './app:/usr/src/app'
@@ -18,15 +20,26 @@ services:
             context: .
             dockerfile: ./docker/postgres/Dockerfile
         restart: always
-        environment:
-                POSTGRES_USER: postgres
-                POSTGRES_PASSWORD: postgres
-                POSTGRES_DB: depotaf
-                PGDATA: /tmp
+        image: postgres_depot:latest
+        env_file:
+            - './docker/postgres_airflow/postgres.env'
         ports:
             - '5432:5432'
         volumes:
             - './pgdata:/var/lib/postgresql/data'
+    airflowdb:
+        container_name: airflowdb
+        build:
+            context: .
+            dockerfile: ./docker/postgres_airflow/Dockerfile
+        image: airflowdb:latest
+        restart: always
+        env_file:
+            - './docker/postgres_airflow/postgres.env'
+        ports:
+            - '5433:5432'
+        volumes:
+            - './pgdata_airflow:/var/lib/postgresql/data'
 volumes:
     pgdata:
         external: true
