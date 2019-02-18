@@ -9,11 +9,13 @@ services:
         restart: always
         ports:
             - '8080:8080'
+        env_file:
+            - './docker/airflow/airflow.env'
         depends_on:
             - airflowdb
             - postgres
         volumes:
-            - './app:/usr/src/app'
+            - './dags:/usr/local/airflow/dags'
     postgres:
         container_name: postgres
         build:
@@ -22,7 +24,7 @@ services:
         restart: always
         image: postgres_depot:latest
         env_file:
-            - './docker/postgres_airflow/postgres.env'
+            - './docker/postgres/postgres.env'
         ports:
             - '5432:5432'
         volumes:
