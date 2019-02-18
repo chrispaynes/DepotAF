@@ -1,0 +1,32 @@
+version: '3'
+services:
+    airflow-app:
+        container_name: airflow-app
+        build:
+            context: .
+            dockerfile: ./docker/airflow/Dockerfile
+        restart: always
+        ports:
+            - '8000:8000'
+        depends_on:
+            - postgres
+        volumes:
+            - './app:/usr/src/app'
+    postgres:
+        container_name: postgres
+        build:
+            context: .
+            dockerfile: ./docker/postgres/Dockerfile
+        restart: always
+        environment:
+                POSTGRES_USER: postgres
+                POSTGRES_PASSWORD: postgres
+                POSTGRES_DB: depotaf
+                PGDATA: /tmp
+        ports:
+            - '5432:5432'
+        volumes:
+            - './pgdata:/var/lib/postgresql/data'
+volumes:
+    pgdata:
+        external: true
