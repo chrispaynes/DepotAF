@@ -1,12 +1,19 @@
-.PHONY: buildAirflow databaseImage databaseClean 
+.PHONY: airflowDBClean buildAirflow postgresImage postgresClean
 
 # sudo to override permission errors on mounted PostgreSQL docker volume
 buildAirflow:
 	sudo docker-compose build airflow-app
 
-databaseImage: databaseClean
-	docker-compose build postgres
+postgresImage: postgresClean
+	docker-compose kill postgres \
+	&& docker rmi postgres_depot:latest | true \
+	&& sudo docker-compose build postgres \
+	&& docker-compose up -d --force-recreate \
+	&& docker-compose logs -f postgres
 
-databaseClean:
-	sudo rm -rf ./docker/postgres/pgdata
+postgresClean:
+	sudo rm -rf ./pgdata
+
+airflowDBClean:
+	sudo rm -rf ./pgdata_airflow
 
