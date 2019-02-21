@@ -1,4 +1,4 @@
-.PHONY: airflowDBClean buildAirflow postgresImage postgresClean
+.PHONY: airflowAttach airflowDBClean buildAirflow postgresImage postgresClean
 
 # sudo to override permission errors on mounted PostgreSQL docker volume
 buildAirflow:
@@ -17,3 +17,10 @@ postgresClean:
 airflowDBClean:
 	sudo rm -rf ./pgdata_airflow
 
+airflowAttach:
+	docker exec -ti airflow-app bash
+
+DAG=notecard_populator
+TASK=populate_csv
+airflowTest:
+	docker exec -ti airflow-app airflow test $(DAG) $(TASK) 01-01-01

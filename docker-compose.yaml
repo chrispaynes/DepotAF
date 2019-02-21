@@ -16,6 +16,8 @@ services:
             - postgres
         volumes:
             - './dags:/usr/local/airflow/dags'
+            - './depot:/usr/local/airflow/depot'
+            - './processed:/usr/local/airflow/processed'
     postgres:
         container_name: postgres
         build:
